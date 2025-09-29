@@ -1,0 +1,51 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^https?://polarion\\.company\\.com/.*",
+  "name": "Polarion Multi-Instance Service",
+  "id": 1000,
+  "description": "Polarion unified access with multiple instances",
+  "evaluationOrder": 10,
+  "logo": "https://polarion.company.com/images/polarion-logo.png",
+  "logoutType": "BACK_CHANNEL",
+  "logoutUrl": "https://polarion.company.com/logout",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "principalAttributesRepository": {
+      "@class": "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
+      "attributeRepositoryIds": ["java.util.HashSet", ["ldapAttributes"]],
+      "ignoreResolvedAttributes": false
+    },
+    "authorizedToReleaseCredentialPassword": false,
+    "authorizedToReleaseProxyGrantingTicket": false
+  },
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled": true,
+    "requireAllAttributes": false,
+    "caseInsensitive": false
+  },
+  "properties": {
+    "@class": "java.util.HashMap",
+    "polarionInstance1Url": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": ["java.util.HashSet", ["http://localhost:8080/polarion"]]
+    },
+    "polarionInstance2Url": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": ["java.util.HashSet", ["http://localhost:8090/polarion"]]
+    }
+  },
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "failureMode": "NOT_SET",
+    "bypassEnabled": true
+  },
+  "proxyPolicy": {
+    "@class": "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider",
+    "canonicalizationMode": "NONE",
+    "encryptUsername": false
+  }
+}

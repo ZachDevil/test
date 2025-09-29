@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Polarion实例2配置文件 -->
+<polarion-configuration>
+    <!-- 基本配置 -->
+    <instance>
+        <name>polarion-instance-2</name>
+        <id>instance2</id>
+        <port>8090</port>
+        <context-path>/polarion</context-path>
+    </instance>
+    
+    <!-- 数据库配置 -->
+    <database>
+        <type>postgresql</type>
+        <host>localhost</host>
+        <port>5432</port>
+        <name>polarion2_db</name>
+        <user>polarion_user</user>
+        <password>polarion_password</password>
+        <pool>
+            <min-size>5</min-size>
+            <max-size>50</max-size>
+            <timeout>30000</timeout>
+        </pool>
+    </database>
+    
+    <!-- SVN仓库配置 -->
+    <svn>
+        <repository-path>/data/svn/polarion2</repository-path>
+        <url>file:///data/svn/polarion2</url>
+        <cache>
+            <enabled>true</enabled>
+            <size>1024</size> <!-- MB -->
+        </cache>
+    </svn>
+    
+    <!-- Session配置 -->
+    <session>
+        <cookie-name>POLARION2_SESSIONID</cookie-name>
+        <cookie-path>/polarion2</cookie-path>
+        <cookie-domain>.company.com</cookie-domain>
+        <timeout>1800</timeout> <!-- 30分钟 -->
+        <secure-cookie>false</secure-cookie> <!-- 生产环境应设置为true -->
+        <http-only>true</http-only>
+    </session>
+    
+    <!-- SSO集成配置 -->
+    <authentication>
+        <type>custom-sso</type>
+        <sso>
+            <enabled>true</enabled>
+            <service-url>http://localhost:8100/sso</service-url>
+            <filter-class>com.company.polarion.sso.SSOAuthenticationFilter</filter-class>
+            <exclude-patterns>
+                <pattern>.*\.(js|css|png|jpg|gif|ico)$</pattern>
+                <pattern>/polarion/api/public/.*</pattern>
+                <pattern>/polarion/health</pattern>
+            </exclude-patterns>
+            <attributes-mapping>
+                <username>preferred_username</username>
+                <email>email</email>
+                <roles>polarion_roles</roles>
+            </attributes-mapping>
+        </sso>
+    </authentication>
+    
+    <!-- 日志配置 -->
+    <logging>
+        <root-level>INFO</root-level>
+        <file>/var/log/polarion/instance2/polarion.log</file>
+        <max-file-size>100MB</max-file-size>
+        <max-backup-index>10</max-backup-index>
+        <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        <loggers>
+            <logger name="com.company.polarion.sso" level="DEBUG"/>
+            <logger name="org.apache.http" level="WARN"/>
+            <logger name="org.postgresql" level="WARN"/>
+        </loggers>
+    </logging>
+    
+    <!-- 缓存配置 -->
+    <cache>
+        <provider>ehcache</provider>
+        <config-file>/opt/polarion2/etc/ehcache.xml</config-file>
+        <distributed>
+            <enabled>false</enabled>
+            <multicast-group>230.0.0.2</multicast-group>
+            <multicast-port>4447</multicast-port>
+        </distributed>
+    </cache>
+    
+    <!-- 性能优化配置 -->
+    <performance>
+        <thread-pool>
+            <core-size>10</core-size>
+            <max-size>100</max-size>
+            <queue-capacity>1000</queue-capacity>
+            <keep-alive-seconds>60</keep-alive-seconds>
+        </thread-pool>
+        <query>
+            <max-results>1000</max-results>
+            <timeout>60000</timeout> <!-- 毫秒 -->
+            <cache-enabled>true</cache-enabled>
+        </query>
+        <indexing>
+            <batch-size>100</batch-size>
+            <commit-interval>5000</commit-interval> <!-- 毫秒 -->
+            <optimize-interval>3600000</optimize-interval> <!-- 1小时 -->
+        </indexing>
+    </performance>
+    
+    <!-- 通知配置 -->
+    <notifications>
+        <email>
+            <enabled>true</enabled>
+            <smtp>
+                <host>smtp.company.com</host>
+                <port>587</port>
+                <username>polarion@company.com</username>
+                <password>email-password</password>
+                <use-tls>true</use-tls>
+            </smtp>
+            <from>polarion-instance2@company.com</from>
+        </email>
+    </notifications>
+    
+    <!-- 备份配置 -->
+    <backup>
+        <enabled>true</enabled>
+        <schedule>0 3 * * *</schedule> <!-- 每天凌晨3点，错开实例1 -->
+        <path>/backup/polarion2</path>
+        <retention-days>30</retention-days>
+        <include-database>true</include-database>
+        <include-svn>true</include-svn>
+        <include-attachments>true</include-attachments>
+    </backup>
+</polarion-configuration>
