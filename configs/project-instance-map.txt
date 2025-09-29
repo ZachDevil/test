@@ -1,0 +1,18 @@
+# 项目到Polarion实例的映射表
+# 格式: 项目ID 实例编号
+# 用于Apache RewriteMap
+
+# 实例1的项目
+projectA 1
+projectB 1
+projectC 1
+legacy_projects 1
+
+# 实例2的项目（新项目或需要迁移的项目）
+projectX 2
+projectY 2
+projectZ 2
+new_projects 2
+
+# 默认映射
+default 1
